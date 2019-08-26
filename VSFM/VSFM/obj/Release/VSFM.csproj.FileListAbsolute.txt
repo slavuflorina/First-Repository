@@ -1,0 +1,14 @@
+C:\VSFM\VSFM\bin\Release\VSFM.exe
+C:\VSFM\VSFM\bin\Release\VSFM.pdb
+C:\VSFM\VSFM\obj\Release\ResolveAssemblyReference.cache
+C:\VSFM\VSFM\obj\Release\VSFM.Form1.resources
+C:\VSFM\VSFM\obj\Release\VSFM.Properties.Resources.resources
+C:\VSFM\VSFM\obj\Release\VSFM.csproj.GenerateResource.Cache
+C:\VSFM\VSFM\obj\Release\VSFM.exe
+C:\VSFM\VSFM\obj\Release\VSFM.pdb
+C:\VSFM\VSFM\obj\Release\VSFM.Form3.resources
+C:\VSFM\VSFM\obj\Release\VSFM.Form2.resources
+C:\VSFM\VSFM\obj\Release\VSFM.Form4.resources
+C:\VSFM\VSFM\obj\Release\VSFM.Form5.resources
+C:\Users\florina\AppData\Local\Microsoft\Windows\Burn\Burn\VSFM\VSFM\obj\Release\VSFM.exe
+C:\Users\florina\AppData\Local\Microsoft\Windows\Burn\Burn\VSFM\VSFM\obj\Release\VSFM.pdb

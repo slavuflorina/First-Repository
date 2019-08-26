@@ -1,0 +1,12 @@
+C:\VSFM\VSFM\bin\Debug\VSFM.exe
+C:\VSFM\VSFM\bin\Debug\VSFM.pdb
+C:\VSFM\VSFM\obj\Debug\ResolveAssemblyReference.cache
+C:\VSFM\VSFM\obj\Debug\VSFM.Form1.resources
+C:\VSFM\VSFM\obj\Debug\VSFM.Form2.resources
+C:\VSFM\VSFM\obj\Debug\VSFM.Form3.resources
+C:\VSFM\VSFM\obj\Debug\VSFM.Form4.resources
+C:\VSFM\VSFM\obj\Debug\VSFM.Form5.resources
+C:\VSFM\VSFM\obj\Debug\VSFM.Properties.Resources.resources
+C:\VSFM\VSFM\obj\Debug\VSFM.csproj.GenerateResource.Cache
+C:\VSFM\VSFM\obj\Debug\VSFM.exe
+C:\VSFM\VSFM\obj\Debug\VSFM.pdb
