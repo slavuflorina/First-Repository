@@ -1,0 +1,85 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  background: #c1bdba;
+  font-family: 'Titillium Web', sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: #333333;
+  -webkit-transition: .5s ease;
+  transition: .5s ease;
+}
+a:hover {
+  color: black;
+}
+
+h1 {
+  text-align: center;
+  color: black;
+  font-weight: 300;
+  margin: 0 0 40px;
+}
+
+input {
+   border: 0;
+  outline: none;
+  border-radius: 2px;
+  
+  font-size: 2rem;
+  font-weight: 70;
+  background: #1ab188;
+  color: black;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+  text-align:center;
+}
+
+table {
+  border-collapse: separate;
+  background: #fff;
+ 
+  border-radius: 5px;
+  margin: 50px auto;
+
+}
+
+
+
+
+
+input:hover
+{ background: #ffff99;}
+
+.button {
+  border: 0;
+  outline: none;
+  border-radius: 0;
+  padding: 15px 0;
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  background: #1ab188;
+  color: #ffffff;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  -webkit-appearance: none;
+}
+.button:hover, .button:focus {
+  background: #179b77;
+}
+
+.button-block {
+  display: block;
+  width: 100%;
+}
+
