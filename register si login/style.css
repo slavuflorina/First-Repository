@@ -1,0 +1,87 @@
+body
+{
+  padding:0px;
+  margin:0px;
+   font-size:20px;
+   background-image:url("46622815-light-wallpaper.jpg");
+}
+.header
+{
+   background-color:#1A3333;
+   color:white;
+   text-align:center;
+   top:0px;
+   width:100%;
+   padding:5px;
+    background-image:url("images.jpg");
+}
+form
+{
+width:40%;
+padding:3px;
+border:1px solid #cbcbcb;
+margin:5px auto;
+ text-align: center;
+ font-size:20px;
+ 
+}
+.textInput
+{
+margin-top:2px;
+height:28px;
+border:1px solid #5E6E66;
+font-size:20px;
+padding:1px;
+width:100%;
+ 
+
+}
+
+td
+{
+  text-align:right;
+}
+#error_msg
+{
+    width:50%;
+    margin:5px auto;
+    height:30px;
+    border:1px solid #FF0000;
+    background:#FFB9B8;
+   color:#FF0000;
+   text-align:center;
+   padding-top:10px;
+    font-size:20px;
+}
+
+button {
+    background-color: #99ffff; 
+    border: 2px solid #555555;
+    color:#121254;
+    padding: 10px 26px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+	 font-size:20px;
+}
+a 
+{
+	color:#121254;
+	text-decoration:none;
+	
+}
+a:hover
+{
+	color:#121254;
+	text-decoration:none;
+}
+
+button:hover {
+    background-color: #ccffff;
+    color: #e6ccffs;
+	border:none;
+	 font-size:20px;
+}
