@@ -1,0 +1,30 @@
+.bg {
+
+    width: 100%;
+    height: auto;
+    background-size: 100%;
+}
+
+
+.form-container {
+    position: absolute;
+    top: 5vh;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px #000;
+	
+}
+
+.form-check {
+    display: none;
+}
+
+.mb-4 {
+    display: block;
+}
+.main {
+    width: 50%;
+    margin: 50px auto;
+}
+

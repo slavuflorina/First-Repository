@@ -1,0 +1,19 @@
+{
+  "name": "symfvideos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@symfony/webpack-encore": "^1.1.1",
+    "jquery": "^3.5.1",
+    "save-dev": "0.0.1-security"
+  }
+}

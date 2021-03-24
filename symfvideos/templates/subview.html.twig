@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<h1>Subview included.</h1>
+{{ path('home') }}<br>
+{{ url('home') }}<br>
+    {% if app.user %}
+        <a href="{{ path('logout') }}" class="btn btn-primary">logout</a>
+    {% endif %}
+{% block javascripts %}
+   <!-- <script>alert('Hello');</script>-->
+    <p>The google tracking code is: {{ ga_code }}</p>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="#">Delete smth</a>
+    {% endif %}
+    {% if is_granted('IS_AUTHENTICATED_FULLY')%}
+        <p>Username: {{ app.user.username }}</p>
+    {% endif %}
+    <a href="{{path('login')}}">awesome link</a>
+    <!--<script src="{{ asset('js/main.js') }}"></script> -->
+{% endblock %}
+{% endblock %}
