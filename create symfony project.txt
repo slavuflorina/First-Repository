@@ -1,0 +1,825 @@
+licenta phpstorm: http://idea.imsxm.com
+			http://127.0.0.1:1337
+cd\
+cd xampp
+cd htdocs
+composer create-project symfony/website-skeleton symfony-project
+cd symfony-project
+php -S 127.0.0.1:8000 -t public  ----trebuie lasat deschis acest rand de cod in cmd ca sa poata vedea localhost:8000
+
+enter on chrome: localhost:8000
+composer require symfony/debug-bundle
+composer require twig
+composer require maker
+composer require annotations
+composer require symfony/apache-pack
+composer require symfony/asset
+pentru entity: composer require orm
+pentru dump: composer require symfony/var-dumper
+pentru date, time: composer require knplabs/knp-time-bundle
+Pentru a crea un controller si un view (view-urile se pun in folderul templates):
+
+
+php bin/console make:controller DefaultController
+php -S 127.0.0.1:8000 -t public
+
+DROP DATABASE:
+php bin/console doctrine:schema:drop -n -q --force --full-database
+
+MANAGE CSS AND JS
+WEBPACK-ENCORE
+npm init
+npm install @symfony/webpack-encore --save-dev
+in root creez: webpack.config.js, unde pun exemplul de la symfprog
+in public pun folderul assets, cu css uri si js urile necesare
+node_modules\.bin\encore dev
+
+Customize errors on live: 
+templates->bundles->TwigBundle->Exception->error500.html.twig
+in .env : APP_ENV=prod
+
+$users = $this->getDoctrine()->getRepository(User::class)->findAll();
+
+VAR GLOBALE
+config->twig.yaml
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    globals:
+        ga_code: GAcode-123
+
+
+in view:         <p>The google tracking code is: {{ ga_code }}</p>
+
+SESIUNI:
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+se defineste ca parametru in functia index:
+public function index(SessionInterface $session){...}
+se foloseste:
+$session->set('name','session value');
+if($session->has('name'))
+exit ($session->get('name'));
+
+GET:
+use Symfony\Component\HttpFoundation\Request;
+public function index(Request $request)
+exit($request->query->get('page','default')); pentru link de forma:http://localhost:8000/default?page=1
+
+ERRORS:
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+ if(!$users)
+        {
+            throw($this->createNotFoundException('The users do not exist!'));
+        }
+
+PENTRU DONWLOAD:
+se seteaza folderul cu fisiere pentru descarcari in routes->services.yaml
+parameters:
+      download_directory: '../public/
+
+SELECT FARA ENTITYMANAGER:
+composer require sensio/framework-extra-bundle
+/**
+     * @Route("/paramconverter/{id}", name="paramconverter")
+     */
+    public function paramconverter(Request $request, User $user){
+       // $entityManager = $this->getDoctrine()->getManager();
+       dump($user);
+        return $this->render('subview.html.twig', [
+            'controller_name' => 'DefaultController'
+        ]);
+    }
+
+DATABASE:
+composer require doctrine
+in .env din vendor schimb asa: DATABASE_URL=mysql://root:@127.0.0.1:3306/todo-list
+php bin/console doctrine:database:create
+php bin/console make:entity
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+
+EXECUTE A QUERY:
+parametru in functie: EntityManagerInterface $entityManager
+        $conn = $this->entityManager->getConnection();
+        $sql = "SELECT * FROM categories";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+
+SINGLETON PATTERN:
+src->Utils->AbstractClasses->CategoryTreeAbstract.php:
+abstract class CategoryTreeAbstract
+{
+    protected static $dbConnection;
+    public $categoriesArrayFromDb;
+
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator)
+    {
+        $this->entityManager = $entityManager;
+        $this->urlGenerator = $urlGenerator;
+        $this->categoriesArrayFromDb = $this->getCategories();
+    }
+
+    abstract public function getCategoryList(array $categories_array);
+
+    private function getCategories(): array
+    {
+        if (self::$dbConnection) {
+            return self::$dbConnection;
+        } else {
+            $conn = $this->entityManager->getConnection();
+            $sql = "SELECT * FROM categories";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            return self::$dbConnection = $stmt->fetchAll();
+        }
+    }
+
+}
+PAGINATION:
+composer require knplabs/knp-paginator-bundle
+config->packages->paginator.yaml:
+knp_paginator:
+    page_range: 5                       # number of links showed in the pagination menu (e.g: you have 10 pages, a page_range of 3, on the 5th page you'll see links to page 4, 5, 6)
+    default_options:                                 
+        page_name: page                 # page query parameter name
+        sort_field_name: sort           # sort field query parameter name
+        sort_direction_name: direction  # sort direction query parameter name
+        distinct: true                  # ensure distinct results, useful when ORM queries are using GROUP BY statements
+        filter_field_name: filterField  # filter field query parameter name
+        filter_value_name: filterValue  # filter value query parameter name
+    template:                                        
+        pagination: '@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig'  
+        sortable: '@KnpPaginator/Pagination/sortable_link.html.twig' # sort link template       
+        filtration: '@KnpPaginator/Pagination/filtration.html.twig'  # filters template
+in route in controller: @Route("/video-list/category/{categoryname},{id}/{page}, defaults={"page": "1"},
+se foloseste:  public function videoList($id, $page, ..
+si  $videos = $this->getDoctrine()
+            ->getRepository(Video::class)
+            ->findAllPaginated($page);
+unde in VideoRepository:
+use Knp\Component\Pager\PaginatorInterface;
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
+    {
+        parent::__construct($registry, Video::class);
+        $this->paginator = $paginator;
+    }
+public function finadAllPaginated($page)
+{
+$dbquery = $this->createQueryBuilder('v') ->getQuery();
+$pagination$this->paginator->paginate($dbquery, $page, 5);
+return $pagination;
+}
+in view, sub afisarea videourilor: {{ knp_pagination_render(videos) }}
+
+NPM:  ???
+npm install, enteruri
+npm install @symfony/webpack-encore --save-dev
+npm install --save jquery
+webpack.config.js in root:
+var Encore = require('@symfony/webpack-encore');
+Encore
+.setOutputPath('public/build/')
+.setPublicPath('/build')
+.addEntry('js/custom','./build/js/custom.js')
+.addStyleEntry('css/custom',['./build/css/custom.css'])
+//.autoProvidejQuery()
+;
+module.exports = Encore.getWebpackConfig();
+
+node_modules\.bin\encore dev
+
+
+LATEST POST:
+    public function mostPopularPosts($number = 3) - in controller
+fac template ul (cum doresc sa afiseze)
+in index.html.twig ( sau in ce teplate doresc sa se afiseze):
+{{render(controller(
+    'App\\Controller\\DefaultController::mostPopularPosts',
+    { 'number': 2 }
+    ))}}
+
+
+FIXTURES: - se folosesc pentru a face insert in baza de date cu cateva exemple de test
+Atentie! Suprascrie datele deja existente
+composer require orm-fixtures --dev
+php bin/console make:fixtures
+se face adaugarea in bd in functia load
+use App\Entity\Category;
+in functia load:
+foreach($this->getMainCategoriesData() as $name){
+       $category= new Category();
+	$category->setName('name');
+         $manager->persist($category);
+}
+        $manager->flush();
+private functio getMainCategoriesData()
+{return ['Electronics','Toys','Books','Movies'];}
+php bin\console doctrine:fixtures:load
+
+
+MANY TO ONE RELATION ( ex: Users, Videos, in Videos se doreste adaugarea user_id, mai multe videouri pe user)
+se creaza noul entity si se adauga ca tipul campului relation, apoi alegi tabelul de care se leaga campul
++campul care se adauga in tabelul de care se leaga
+
+ONE TO ONE RELATION (ex: Users, Adress, fiecare user o singura adresa)
+make entity Adress
+make entity User ( exista deja, doar adaugam campul adress de tip relation)
+
+MANY TO MANY self relation (ex Users, camp followed de tip relation cu tabelul Users, unde se adauga apoi si campul following)
+make entity Users, adaug campurile la rand
+Se creaza tabelul user_user cu cel doua campuri
+
+SERVICES:
+in folderul Services se adauga php urile
+in services.yaml:
+    App\Services\MyService:
+        arguments:
+                $param: 'some parameter'
+ex: MyService.php
+<?php
+
+namespace App\Services;
+
+class MyService{
+
+    public function __construct($param)
+    {
+        dump($param);
+    }
+}
+
+apoi se include in controller: 
+use App\Services\MyService;  
+ /**
+     * @Route("/myService", name="myService")
+     */
+    public function myService(Request $request, MyService $service)
+    {
+        return $this->render('subview.html.twig', [
+            'controller_name' => 'DefaultController'
+        ]);
+    }
+Nu trebuie neaparat functie noua, poate fi adaugat si intr o functie deja existenta.
+Daca se doresc parametri globali, se pot adauga randurile:
+        bind:
+            $global_parameter: 'Global parameter'
+in _defaults din services.yaml, care se da apoi ca parametru in MyService.php
+Injectare MySecondService in MyService:
+in services.yaml:
+    App\Services\MyService:
+        arguments:
+                $param: 'some parameter'
+                $admin_email: '%admin_email%'
+                $second_service: '@App\Services\MySecondService'
+
+in MyService.php:
+class MyService{
+
+    public function __construct($param, $admin_email, $global_parameter, MySecondService $second_service)
+    {
+        dump($param);
+        dump($admin_email);
+        dump($global_parameter);
+        dump($second_service);
+    }
+}
+
+LAZY SERVICE:
+composer require symfony/proxy-manager-bridge
+In al doilea Service injectat in primul:
+
+    App\Services\MySecondService:
+        lazy: true
+Al doilea service:
+    public function someMethod()
+    {
+        return 'Lazy Service';
+    }
+Primul service:
+$this->secService = $service;
+Controller principal:
+ dump($service->secService->someMethod());
+
+CACHE:
+composer require symfony/cache
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+In controller:
+  $cache = new FilesystemAdapter();
+        $posts = $cache->getItem('database.get_posts');
+	$posts_from_db = ['post1', 'post2', 'post3'];
+            dump('connected');
+            $posts->set(serialize($posts_from_db));
+            $posts->expiresAfter(5);
+            $cache->save($posts);
+Pentru a sterge cache:  $cache->clear();
+        dump(unserialize($posts->get()));
+TWIG EXTENSION:
+php bin/console make:twig-extension ->AppExtension
+in acest fisier:
+<?php
+
+namespace App\Twig;
+
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
+
+class AppExtension extends AbstractExtension
+{
+    public function getFilters(): array
+    {
+        return [
+            // If your filter generates SAFE HTML, you should add a third
+            // parameter: ['is_safe' => ['html']]
+            // Reference: https://twig.symfony.com/doc/2.x/advanced.html#automatic-escaping
+            new TwigFilter('slugify', [$this, 'slugify']),
+        ];
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('function_name', [$this, 'doSomething']),
+        ];
+    }
+
+    public function slugify($string)
+    {
+        $string = preg_replace("/ +/", "-", trim($string));
+        $string = mb_strtolower(preg_replace("/[^A-Za-z0-9-]+/", "", $string), 'UTF-8');
+        return $string;
+    }
+}
+iar in view folosesc: 'categoryname':category.name|lower|slugify,
+FORMS:
+EDIT FORM:
+composer require symfony/form
+php bin/console make:entity Video
+adaug campuri
+php bin/console make:form VideoFormType
+aleg sa fie legat de tabelul Video
+de agaugat in Form->VideoFormType.php:  
+	   use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+ 	
+
+in controller:
+use App\Form\VideoFormType;
+  $video = new Video();
+        $video->setTitle('Video title');
+        $video->setCreatedAt(new \DateTime('tomorrow'));
+        $form = $this->createForm(VideoFormType::class, $video);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            dump($form->getData());
+        }
+  return $this->render('displayForm.html.twig', [
+            'controller_name' => 'DefaultController',
+            'form' => $form->createView(),
+        ]);
+in template:
+{% extends 'base.html.twig' %}
+{% block body %}
+{#{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }} #}
+    {{ form(form) }}
+{% endblock %}
+Pentru a pune labeluri : 	->add('created_at', DateType::class,[
+            'label' => 'Set date',
+             'widget' => 'single_text',
+                ])
+	   ->add('save', SubmitType::class, [ 'label' => 'Add video'])
+ ->add('title',TextType::class,[
+            'label' => 'Set title',
+             'data' => 'Example title',
+                'required' => false
+                 ])
+pentru BOOTSTRAP:
+in twig.yaml : 
+    form_themes: ['bootstrap_4_layout.html.twig']
+in view:     {% form_theme form 'bootstrap_4_layout.html.twig' %}
+    {{ form(form) }}
+
+validare:
+composer require symfony/validator doctrine/annotations
+in entity:
+use Symfony\Component\Validator\Constraints as Assert;
+/**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=2, max=10, minMessage = "Video title must be at least {{limit}} characters long.", maxMessage = "Video title must can not be longer than {{limit}} characters.")
+     */
+pentru email:
+/**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\Email(message= "The email '{{value}}' is not valid")  */
+Pentru edit in controller:
+$entityManager = $this->getDoctrine()->getManager();
+        $video = $entityManager->getRepository(Video::class)->find(1);
+       # dump($videos);
+        #$video = new Video();
+        //$video->setTitle('Video title');
+        //$video->setCreatedAt(new \DateTime('tomorrow'));
+        $form = $this->createForm(VideoFormType::class, $video);
+        $form->handleRequest($request);
+        if($form->isSubmitted()&&$form->isValid())
+        {
+            //dump($form->getData());
+           // return ($this->redirectToRoute('event'));
+            $entityManager->persist($video);
+            $entityManager->flush();
+            return ($this->redirectToRoute('form'));
+        }
+        return $this->render('displayForm.html.twig', [
+            'controller_name' => 'DefaultController',
+            'form' => $form->createView(),
+        ]);
+Adaugare TERMENI SI CONDITII, fara varsare in bd:
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+->add('agreeTerms', CheckboxType::class,[
+'label' => 'Agree?',
+'mapped' => false  //asta nu te lasa sa treci mai departe daca nu bifezi
+])
+
+UPLOAD FILE:
+make entity Video, camp file
+/**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     * @Assert\File(maxSize="1024k",mimeTypes={"video/mp4","application/pdf","application/x-pdf"},
+mimeTypesMessage= "Please upload a valid video")  */
+
+Entity:
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+->add('file', FileType::class,[
+'label' => 'Upload file'
+])
+in view:  {{ form_label(form.file) }}
+    {{ form_widget(form.file) }}
+Pentru BOOTSTRAP, in base.html.twig:
+        {% block stylesheets %}
+            {#{{ encore_entry_link_tags('app') }}#}
+            <!-- CSS only -->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+        {% endblock %}
+In controller:
+if($form->isSubmitted() && $form->isValid())
+{
+$file = $form->get('file')->getData();
+$filename = sha1(random_bytes(14)).'.'.$file->guessExtension();
+$file->move($this->getParameter('videos_directory'));
+//adaugare bd
+}
+In services.yaml:
+parameters:
+      videos_directory: '%kernel.project_dir%/public/uploads/videos'
+
+SEND EMAILS:
+composer require symfony/swiftmailer-bundle
+    public function mail(Request $request, \Swift_mailer $mailer)
+    {
+	$message = (new \Swift_Message('Hello Email'))
+->setFrom('send@example.com')
+->setTo('slavuflorina@yahoo.com')
+->setBody(
+$this->renderView(
+'emails/registration.html.twig',
+array('name'=>'Florina')
+), 
+'text/html'
+);
+$mailer->send($message);
+	
+        return $this->render('displayForm.html.twig', [
+            'controller_name' => 'DefaultController'
+        ]);
+    }
+swiftmailer:
+    url: '%env(MAILER_URL)%'
+    spool:
+         type: file
+         path: '%kernel.project_dir%/var/spool'
+
+php bin/console swiftmailer:spool:send --message-limit=10
+FUNCTIONAL EMAIL:
+composer require browser-kit css-selector --dev
+composer require symfony/panther --dev
+php bin/console make:functional-test
+clasa: EmailsTest
+composer require --dev symfony/phpunit-bridge
+php ./bin/phpunit
+In EmailsTest:
+    public function testSomething(): void
+    {
+        $client = static::createClient();
+        $client->enableProfiler();
+        $crawler = $client->request('GET', '/form');
+
+        $mailCollector = $client->getProfile()->getCollector('swiftmailer');
+        $this->assertSame(1, $mailCollector->getMessageCount());
+        $collectedMessages = $mailCollector->getMessages();
+        $message = $mailCollector[0];
+        $this->assertInstanceOf('Swift_Message', $message);
+        $this->assertSame('Hello Email', $message->getSubject());
+        $this->assertSame('send@example.com', key($message->getFrom()));
+        $this->assertSame('slavuflorina@yahoo.com', key($message->getTo()));
+        $this->assertContains('You registered!', $message->getBody());
+
+    }
+Testez cu php ./bin/phpunit
+
+SECURITY USER
+composer require security
+php bin/console make:user
+php bin/console make:entity SecurityUser (pt ca user deja este luat la mine)
+php bin/console doctrine:migrations:migrate
+
+REGISTER
+composer require symfony/orm-pack symfony/form symfony/security-bundle symfony/validator
+php bin/console make:form
+->RegisterUserType
+->SecurityUser
+Adaug validari in Enityt +mesaje validari in Form
+Adaug use Symfony\Component\Form\Extension\Core\Type\EmailType;
+  ->add('email', EmailType::class)
+->add('password', RepeatedType::class,[
+'type' => PasswordType::class,
+'first_options'=>array('label'=>'Password'),
+'second_options'=>array('label'=>'Repeat password'),
+]);
+De adaugat butonul de Submit si de adaugat la use toate type urile necesare (PasswordType etc)
+Controller:
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface ;
+/**
+     * @Route("/register", name="register")
+     */
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    {
+	$user = new SecurityUser();
+	$form = $this->createForm(SecurityUser::class, $user);
+	$form->handleRequest($request);
+	if($form->isSubmitted()&&$form->isValid())
+{
+ $user->setPassword( $passwordEncoder->encodePassword($user, $form->get('password')->getData()));
+$user->setEmail( $form->get('email')->getData());
+//$user->setRole($form->get('role')->getData());
+$entityManager=$this->getDoctrine()->getManager();
+$entityManager->persist($user);
+$entityManager->flush();
+return $this->redirectToRoute('home');
+}
+
+  return $this->render('default/index.html.twig', [
+            'controller_name' => 'DefaultController',
+            'form' => $form->createView(),
+        ]);
+    }
+Cheie unica: 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+@UniqueEntity("email")
+
+LOGIN:
+composer require symfony/orm-pack symfony/form symfony/security-bundle symfony/validator
+security.yaml:
+            form_login:
+                      login_path: login
+                      check_path: login
+                      username_parameter: 'email'
+                      password_parameter: 'password'
+                      csrf_token_generator: security.csrf.token_manager
+                      default_target_path: admin_main_page
+In controller:
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+  public function login(Request $request,AuthenticationUtils $authenticationUtils)
+{
+$error = $authenticationUtils->getLastAuthenticationError();
+$lastUsername = $authenticationUtils->getLastUsername();
+return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
+}
+
+LOGOUT:
+security.yaml:
+            logout:
+                      path: /logout
+                      target: /home
+routes.yaml:
+logout:
+      path: /logout
+in view:
+{% if app.user %}
+<a href="{{ path('logout') }}">logout</a>
+{% endif %}
+
+REMEMBER ME:
+in view:
+  <div class="checkbox mb-3">
+                <label>
+                    <input type="checkbox" name="_remember_me"> Remember me
+                </label>
+            </div>
+security.yaml:
+            remember_me:
+                      secret: '%kernel.secret%'
+                      lifetime: 604800  #1 week in seconds
+                      #always_remember_me: true
+                      path: /
+
+CHECKING SECURITY: - verifica daca vreun pachet instalat are vulnerabilitati
+composer require sensiolabs/security-checker
+php bin/console security:check
+
+EXPRESSION LANGUAGE: ACTIUNI CARE DEPIND DE ROLE (ex. stergerea unui video permisa doar adminilor)
+composer require symfony/expression-language
+in View:
+    // @Security("has_role('ROLE_ADMIN')")
+    /**
+     * @Route("/deleteVideo/{id}/delete-video", name="deleteVideo")
+     * @Security("user.getId() == video.getSecurityUser().getId()")
+     */
+
+SAU: 
+security.yaml:
+    access_control:
+         - { path: ^/admin, roles: ROLE_ADMIN }
+controller:
+  /**
+     * @Route("/admin", name="login")
+     */  --- ce contine admin in route va returna Acces denied daca nu esti admin
+
+ROLE: de forma ["ROLE_ADMIN"] sau ["ROLE_USER"]
+
+denyAccessUnlessGranted 
+pentru a interzice acces direct in controller
+unde este nevoie: $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+te va redirectiona catre login
+sau: $this->denyAccessUnlessGranted('ROLE_ADMIN'); - daca nu esti admin, ai acces interzis
+
+Daca se doreste afisarea unei anumite parti in view ( ex, un buton vizibil doar pt admin):
+{% if is_granted('ROLE_ADMIN') %}
+<a href="#">Delete smth</a>
+{% endif %}
+sau afisare ceva anume daca esti logat indiferent de rol:
+{% if is_granted('IS_AUTHENTICATED_FULLY')%}
+<p>Username: {{ app.user.username }}</p>
+{% endif %}
+
+AUTHENTICATION USING VOTERS:
+php bin/console make:voter ->VideoVoter
+se adauga cazurile dorite: return in_array($attribute, ['VIDEO_DELETE', 'VIDEO_VIEW']), la fel si in case uri
+$video = $subject;
+        // ... (check conditions and return true to grant permission) ...
+        switch ($attribute) {
+            case 'VIDEO_DELETE':
+                return $user === $video->getSecurityUser();
+                break;
+                // logic to determine if the user can EDIT
+                // return true or false
+                break;
+            case 'VIDEO_VIEW':
+                return $user === $video->getSecurityUser();
+                break;
+in controller:
+     $entityManager = $this->getDoctrine()->getManager();
+        $video = $entityManager->getRepository(Video::class)->find(1);
+      //  dump($users);
+        dump($video);
+        $this->denyAccessUnlessGranted('VIDEO_VIEW', $video);
+controllerul respectiv da acces denied daca nu esti admin
+
+
+UNIT TEST
+php ./bin/phpunit - ca sa ruleze testele
+composer require --dev symfony/phpunit-bridge
+php bin/console make:unit-test ->CalculatorTest
+apoi se creaza Services->Calculator.php 
+in CalculatorTest se adauga use App\Services\Calculator; si
+    public function testSomething(): void
+    {
+        $calculator = new Calculator();
+        $result = $calculator->add(1,9);
+        $this->assertEquals(10, $result);
+    }
+apoi rulez php ./bin/phpunit
+
+FUNCTIONAL TEST
+composer require --dev symfony/test-pack
+php bin/console make:functional-test->DefaultControllerTest
+in acest test:
+    public function testSomething(): void
+    {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/event');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Subview included.');
+    }
+pentru ca in view ul inclus in route /event am: <h1>Subview included.</h1>
+ca sa ruleze doar DefaultControllerTest, nu toate testele din folderul tests:
+php ./bin/phpunit tests/DefaultControllerTest.php
+ALTE ASSERTURI:
+ $this->assertGreaterThan(
+            0,
+            $crawler->filter('html:contains("Hello")')->count()
+        );
+        // $this->assertGreaterThan(0, $crawler->filter('h1.class')->count());
+        $this->assertCount(1, $crawler->filter('h1'));
+        $this->assertTrue(
+            $client->getResponse()->headers->contains(
+                'Content-Type',
+                'application/json'
+            ),
+            'the "Content-Type" header is "application/json"' // optional message shown on failure
+        );
+        $this->assertContains('foo', $client->getResponse()->getContent());
+        $this->assertRegExp('/foo(bar)?/', $client->getResponse()->getContent());
+        $this->assertTrue($client->getResponse()->isSuccessful(), 'response status is 2xx');
+        $this->assertTrue($client->getResponse()->isNotFound());
+        $this->assertEquals(
+            200, // or Symfony\Component\HttpFoundation\Response::HTTP_OK
+            $client->getResponse()->getStatusCode()
+        );
+        $this->assertTrue(
+            $client->getResponse()->isRedirect('/demo/contact')
+            // if the redirection URL was generated as an absolute URL
+            // $client->getResponse()->isRedirect('http://localhost/demo/contact')
+        );
+
+Test Click Link:
+<a href="{{ path('login') }}" class="btn btn-primary">Go to form route</a>
+in test: $link = $crawler->filter('a:contains("Go to form route")')->link();
+$crawler = $client->click($link);
+$this->assertContains('Remember me', $client->getResponse()->getContent());
+
+
+Assert send form:
+        $crawler = $client->request('GET', '/login');
+
+        $form = $crawler->selectButton('Sign in')->form();
+        $form['email'] = 'slavuflorina@yahoo.com';
+        $form['password'] = '1234';
+
+        $crawler = $client->submit($form);
+        $crawler = $client->followRedirect();
+
+        $this->assertEquals(1, $crawler->filter('a:contains("logout")')->count());
+
+
+/**
+*@dataProvider provideUrls
+*/
+testSomething($url){
+$client = static::createClient();
+$crawler = $client->request('GET', $url);
+$this->assertTrue($client->getResonse()->isSuccessful()); }
+public function provideUrls()
+{
+return [
+['/home'],.
+['/login']
+];
+}
+
+TRANSLATIONS
+composer require symfony/translation
+in view: <html lang="{{ app.request.locale }}">
+ex: {% trans %}
+Symfony jest super
+{% endtrans %}
+in translations->messages.en.yaml:
+'Symfony jest super': 'Symfony is great'
+in controller:
+use Symfony\Contracts\Translation\TranslatorInterface;
+function... (TranslatorInterface $translator)
+{
+$translated = $translator->trans('Symfony jest super');
+dump($translated);
+}
+Traduceri route:
+/**
+     * @Route({
+     *      "en": "/login",
+     *      "pl": "/logowanie",
+     * }, name="login")
+     */
+in annotation.yaml:
+controllers:
+    resource: ../../src/Controller/
+    type: annotation
+    prefix:
+         en: '' # don't prefix URLs for English, the default locale
+         pl: '/pl'
+Multiple translations:
+in messages.en.yaml:
+symfony.learning: "{0} I haven't started learning Symfony|{1} I've been learning Symfony for one week|{2} I've been learning Symfony for two weeks|{3} I've been learning Symfony for three weeks|]3,Inf] I've been learning Symfony for many weeks"
+view:     {{ 'symfony.learning'|trans }}
+controller:         return $this->render('default/index.html.twig', [
+            'controller_name' => 'DefaultController',
+            'count'=>4
+        ]);

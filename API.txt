@@ -1,0 +1,26 @@
+API:
+composer require admin ( pt EasyAdmin Bundle)
+composer require api
+#composer require --dev api-platform/schema-generator --with-all-dependencies
+composer require easycorp/easyadmin-bundle
+php bin/console make:admin:dashboard
+
+config->schema.yaml:
+types:
+    Product:
+        properties:
+            name: { nullable: false }
+            description: { nullable: false }
+            image: { range: "Text" }
+
+    Product:
+        properties:
+            url: { nullable: false }
+            price: { nullable: false, range: "Number" }
+            priceCurrency: { nullable: false }
+
+php vendor/bin/schema generate-types src/ config/schema.yaml
+
+va crea cele 2 Entity descrise in schema.yaml
+creare baza de date: php bin/console doctrine:database:create
+creare cele 2 tabele din entity: php bin/console doctrine:schema:update --force

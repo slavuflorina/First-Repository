@@ -16,6 +16,10 @@
         <p>Username: {{ app.user.username }}</p>
     {% endif %}
     <a href="{{path('login')}}">awesome link</a>
+    {% trans %}
+    some.key
+    {% endtrans %}
+    {{ 'symfony.learning'|trans }}
     <!--<script src="{{ asset('js/main.js') }}"></script> -->
 {% endblock %}
 {% endblock %}

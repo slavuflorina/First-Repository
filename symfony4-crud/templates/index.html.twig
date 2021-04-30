@@ -8,17 +8,15 @@
     </form>
 </div>
     <ul>
-        <li>
-            <a href="{{ path('switch-status',{'id':1}) }}"><span class="task-list-item">Do shopping</span></a>
-            <a onlick="return confirm('Are you sure to delete?')" href="{{ path('task_delete',{'id':1}) }}">
+{%for task in tasks%}
+
+        <li  {%if task.status%} class="checked" {% endif %}>
+            <a href="{{ path('switch-status',{'id':task.id}) }}"><span class="task-list-item">{{ task.title }}</span></a>
+            <a onlick="return confirm('Are you sure to delete?')" href="{{ path('task_delete',{'id':task.id}) }}">
                 <span class="close">X</span>
             </a>
         </li>
-        <li>
-            <a href="{{ path('switch-status',{'id':2}) }}"><span class="task-list-item">Prepare meal</span></a>
-            <a onlick="return confirm('Are you sure to delete?')"href="{{ path('task_delete',{'id':2}) }}">
-                <span class="close">X</span>
-            </a>
-        </li>
+
+{% endfor %}
     </ul>
 {% endblock %} 

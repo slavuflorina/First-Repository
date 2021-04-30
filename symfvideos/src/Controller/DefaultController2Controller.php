@@ -20,6 +20,7 @@ use App\Form\RegisterUserType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 
@@ -34,9 +35,11 @@ class DefaultController2Controller extends AbstractController
     /**
      * @Route("/event", name="event")
      */
-    public function index(Request $request)
+    public function index(Request $request,TranslatorInterface $translator)
     {
         // $entityManager = $this->getDoctrine()->getManager();
+        $translated = $translator->trans('Symfony jest super');
+        dump($translated);
         $video = new \stdClass();
 
         $video->title = 'Funny movie';
